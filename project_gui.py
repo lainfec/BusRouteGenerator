@@ -92,7 +92,18 @@ class Ui_MainWindow(object):
         self.graphWidget.setTitle("<span style=\"color:white;font-size:20px\">Fitness vs Generations</span>")
         self.graphWidget.setLabel('left', 'Fitness', color='white', size=15)
         self.graphWidget.setLabel('bottom', 'Generations', color='white', size=15)
-
+        self.lab_demand = QtWidgets.QLabel(self.centralwidget)
+        self.lab_demand.setGeometry(QtCore.QRect(10, 550, 261, 21))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.lab_demand.setFont(font)
+        self.lab_demand.setObjectName("lab_demand")
+        self.lab_timefit = QtWidgets.QLabel(self.centralwidget)
+        self.lab_timefit.setGeometry(QtCore.QRect(390, 550, 221, 21))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.lab_timefit.setFont(font)
+        self.lab_timefit.setObjectName("lab_timefit")
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -107,6 +118,7 @@ class Ui_MainWindow(object):
         self.lab_mut.setText(_translate("MainWindow", "Mutation Probability"))
         self.lab_copy.setText(_translate("MainWindow", "Copy Count"))
         self.pushButton.setText(_translate("MainWindow", "Start"))
+        
 
     def gen_equ(self):
         if self.line_gen.text()=='':
@@ -135,9 +147,12 @@ class Ui_MainWindow(object):
             data[4]=int(self.line_copy.text())
 
     def model_start(self):
-        final_population,max_fit,avg_fit=GAM.model_run(data)
+        _translate = QtCore.QCoreApplication.translate
+        final_population,max_fit,avg_fit,demand_fit,time_fit=GAM.model_run(data)
         pen2 = pg.mkPen(color=(0, 255, 0))
         self.graphWidget.plot([x for x in range(data[0])],avg_fit,name="Avg Fit",pen=pen2,clear=True)
+        self.lab_demand.setText(_translate("MainWindow", "Percentage of Demand Fulifilled "+ f"{demand_fit}" ))
+        self.lab_timefit.setText(_translate("MainWindow", "Time Fitness "+ f"{time_fit}"))
 
 
 if __name__ == "__main__":

@@ -6,6 +6,7 @@ import random
 import Data_Transfer
 import csv
 
+fit=[0,0]
 class RouteOptimizer:
     
     def __init__(self):
@@ -126,7 +127,7 @@ class RouteOptimizer:
         
                     
                     
-    def evaluation(self,route_set):
+    def evaluation(self,route_set,store=0):
         
         tot_fit=0
         l=len(route_set)
@@ -153,7 +154,8 @@ class RouteOptimizer:
                             demand_ful+=self.demand_matrix[x][y]
                             
         tot_fit+=(demand_ful/tot_demand)*37              
-        
+        if store==1:
+            fit[0]=(demand_ful/tot_demand)*100
         #calculating time fitness
         tot_time=0
         for x in range(n):
@@ -179,10 +181,13 @@ class RouteOptimizer:
                 if min_time != 100000:
                     tot_time+=(10-abs(self.shortest_time_matrix[x][0][y]-min_time)/self.shortest_time_matrix[x][0][y])
         tot_fit+=tot_time    
-                    
+        if store==1:
+            fit[1]=tot_time
                 
-        
-        return tot_fit
+        if store==0:
+            return tot_fit
+        else:
+            return fit
         
     def modify(self):
         l=len(self.cur_population)
@@ -303,4 +308,6 @@ def model_run(data):
             route_string+=str(bus_stop_data[final_pop[indx][x][len(final_pop[indx][x])-1]][1])
             writer.writerow([x+1,route_string])
 
-    return final_pop[indx],max_fit_x,avg_fit_x
+    last_fit= GA.evaluation(final_pop[indx],1)
+   
+    return final_pop[indx],max_fit_x,avg_fit_x,last_fit[0],last_fit[1]
